@@ -33,4 +33,9 @@ This version includes;<br>
 Configure Software<br>
 Copy the files in repository to ESP32. '/Pics' folder and 'Runway Light Metar STL Files' are not necessary.<br>
 Open 'airports.py' and fill in the needed information. The format is 'PIN Number:Airport ID'<br>
-Open 'config.py' and change the variables and colors to suit your needs.<br>
+Open 'config.py' and change the variables and colors to suit your needs.<p>
+
+Depending on the Runway light being used, the STL files can be used to help complete the build by 3D printing the legs, and lens gasket.<p>
+    
+The /Pics directory provides examples of the build.<p>
+    
