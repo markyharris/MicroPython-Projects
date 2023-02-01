@@ -22,6 +22,8 @@
 #    Display high winds by blinking led's if winds above threshold
 #    Can use either RGB LED's (WS2812) or GRB LED's (WS2811)
 #    Display Weather String as color, such as Rain, Snow etc.
+#    Display a Legend for the Flight Category Colors. Must use these to denote a legend LED
+#      "LG_VFR", "LG_MVFR", "LG_IFR", "LG_LIFR", "LG_NOWX": i.e. 0:"LG_VFR" in airport.py file
 #
 # Open file 'airports.py' and fill in required LED pin number and 4 character airport identifier
 #
