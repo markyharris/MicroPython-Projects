@@ -348,10 +348,10 @@ if __name__ == "__main__":
                     np[pin_num] = dim_leds(get_brightness(), get_fc_color(flight_category))
                     flt_category[pin_num] = (airports[pin_num],get_fc_color(flight_category),wind_speed,wxstring)
             np.write()
-            print(flt_category) # debug
+#            print(flt_category) # debug
             if debug == 1:
                 flt_category = debug_list # debug
-            
+             
             # Print current time after updating all LED's
             str_min = str(min)
             str_hour = str(hour)
@@ -374,15 +374,15 @@ if __name__ == "__main__":
         print("Keyboard Interrupt Received")
         print("\nExiting Program")
         
-#    except Exception as e: # Reset controller and see if issue is temporary
-#        clear()
-#        print("\nResetting ESP32 in 1 minute")
-#        print("Exception:\n",e)
-#        timeout_start = time.time() # Set current moment we enter this code
-#        while time.time() < timeout_start + (60): # Cycle through this until update needed
-#            fade()
-#            time.sleep(1)
-#        machine.reset()
+    except Exception as e: # Reset controller and see if issue is temporary
+        clear()
+        print("\nResetting ESP32 in 1 minute")
+        print("Exception:\n",e)
+        timeout_start = time.time() # Set current moment we enter this code
+        while time.time() < timeout_start + (60): # Cycle through this until update needed
+            fade()
+            time.sleep(1)
+        machine.reset()
 
 
         
