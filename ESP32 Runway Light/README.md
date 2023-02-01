@@ -3,7 +3,12 @@ Version 1.2 </b><p>
 
 ![alt text](https://github.com/markyharris/MicroPython-Projects/blob/main/ESP32%20Runway%20Light/Pics/Runway%20Light%206.jpg?raw=true)
         
-Uses an ESP32 to drive addressable LED's,<br>
+This project uses an ESP32 to drive addressable LED's that are strung around a 'bulb' inside the lens of an airport runway light.<br>
+The bulb holds the ESP32 inside and the LED's are run on the outside, held in place with a little hot glue.<br>
+The ESP32 seems very capable of supplying the needed power for the string of 50 LED's without an extra power supply. The whole thing is powered off 
+the USB cable alone.<p>
+  
+Below are links to to the various components.<br>
  Example ESP32<br>
    https://www.aliexpress.us/item/3256804928892251.html?spm=a2g0o.order_list.order_list_main.5.773d1802eZ3wP3&gatewayAdapt=glo2usa&_randl_shipto=US<br>
  Example Addressable LED's<br>
