@@ -1,6 +1,5 @@
-README.md<br>
-ESP32-Runway Light by Mark Harris<br>
-Version 1.2 <p>
+<b>ESP32-Runway Light by Mark Harris<br>
+Version 1.2 </b><p>
 
 ![alt text](https://github.com/markyharris/MicroPython-Projects/blob/main/ESP32%20Runway%20Light/Pics/Runway%20Light%206.jpg?raw=true)
         
@@ -18,13 +17,20 @@ Install micropython onto ESP32.<br>
    https://randomnerdtutorials.com/getting-started-thonny-micropython-python-ide-esp32-esp8266/<p>
 
 Use Thonny's 'Manage Packages' to install the following; (or use command line to install if desired).<br>
-   micropython-xml.etree.ElementTree<br>
-   micropython-xmltok2<br>
-   micropython-urequests<p>
+   <ul><li>micropython-xml.etree.ElementTree<br>
+   <li>micropython-xmltok2<br>
+   <li>micropython-urequests
+</ul><p>
 
 This version includes;<br>
-   WifiManager - https://randomnerdtutorials.com/esp32-wi-fi-manager-asyncwebserver/<br>
-   Dimming (or off) between two times, for night operations if desired<br>
-   Lightning display if lightning is reported in the METAR<br>
-   Display high winds by blinking led's if winds above threshold<br>
-   Can use either RGB LED's (WS2812) or GRB LED's (WS2811)<br>
+   <ul><li>WifiManager - https://randomnerdtutorials.com/esp32-wi-fi-manager-asyncwebserver/<br>
+   <li>Dimming (or off) between two times, for night operations if desired<br>
+   <li>Lightning display if lightning is reported in the METAR<br>
+   <li>Display high winds by blinking led's if winds above threshold<br>
+   <li>Can use either RGB LED's (WS2812) or GRB LED's (WS2811)
+</ul><p>
+
+Configure Software<br>
+Copy the files in repository to ESP32. '/Pics' folder is not necessary.
+Open 'airports.py' and fill in the needed information. The format is 'PIN Number:Airport ID'<br>
+Open 'config.py' and change the variables and colors to suit your needs.
