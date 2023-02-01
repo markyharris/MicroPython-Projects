@@ -3,7 +3,8 @@ ESP32-Runway Light by Mark Harris<br>
 Version 1.2 <p>
  
 <p align="center">
-<img src="/Pics/Runway%20Light%206.jpg?raw=true)
+<img src="/Pics/Runway%20Light%206.jpg/)
+![alt text](https://github.com/markyharris/[reponame]/blob/[branch]/Pics/Runway%20Light%206.jpg/?raw=true)
 </p>
           
 Uses an ESP32 to drive addressable LED's,<br>
