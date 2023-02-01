@@ -31,6 +31,6 @@ This version includes;<br>
 </ul><p>
 
 Configure Software<br>
-Copy the files in repository to ESP32. '/Pics' folder is not necessary.
+Copy the files in repository to ESP32. '/Pics' folder is not necessary.<br>
 Open 'airports.py' and fill in the needed information. The format is 'PIN Number:Airport ID'<br>
-Open 'config.py' and change the variables and colors to suit your needs.
+Open 'config.py' and change the variables and colors to suit your needs.<br>
