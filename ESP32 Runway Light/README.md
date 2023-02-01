@@ -38,7 +38,7 @@ This version includes;<br>
   </ul><p>
 
 Configure Software<br>
-Copy the files in repository to ESP32. NOTE: '/Pics' folder and 'Runway Light Metar STL Files' are not necessary.<br>
+Copy the files in repository to ESP32. NOTE: '/Pics' folder and '/Runway Light Metar STL Files' are not necessary.<br>
 Open 'airports.py' and fill in the needed information. The format is 'LED PIN Number:Airport ID'<br>
 Open 'config.py' and change the variables and colors to suit your needs.<p>
 
