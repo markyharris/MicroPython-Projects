@@ -1,4 +1,4 @@
-<b>ESP32-Runway Light by Mark Harris<br>
+<b>ESP32-Runway Light by Mark Harris</b><br>
 <p>
 
 ![alt text](https://github.com/markyharris/MicroPython-Projects/blob/main/ESP32%20Runway%20Light/Pics/Runway%20Light%206.jpg?raw=true)
