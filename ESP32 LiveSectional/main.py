@@ -52,6 +52,7 @@ url = f"https://www.aviationweather.gov/adds/dataserver_current/httpparam?dataSo
 # Setup Needed Lists
 COLOR_LIST = [VFR_COLOR, MVFR_COLOR, IFR_COLOR, LIFR_COLOR, NOWX_COLOR]
 FC_LIST = ["VFR", "MVFR", "IFR", "LIFR", "NOWX"]
+LG_LIST = ["LG_VFR", "LG_MVFR", "LG_IFR", "LG_LIFR", "LG_NOWX"]
 
 
 # Weather String codes
@@ -262,7 +263,6 @@ def show_wxstring():
     np.write()
     time.sleep(1)
 
-    
 
 def rgbgrb(color):
     if rgb_grb:
@@ -271,6 +271,16 @@ def rgbgrb(color):
     r,g,b = color
     xcolor = (g,r,b)
     return(xcolor)
+
+
+def show_legend():
+    for pin_num in airports:
+        if airports[pin_num] in LG_LIST:
+#            print(airports[pin_num]) # debug
+            index = LG_LIST.index(airports[pin_num])
+            np[pin_num]  = dim_leds(get_brightness(),COLOR_LIST[index]) # help transition as new data is received
+#            print(COLOR_LIST[index]) # debug
+    np.write()
 
 
 # Start of Executed Code
@@ -287,6 +297,7 @@ if __name__ == "__main__":
     clear()
     fade()
     rainbowCycle(np,3)
+    show_legend()
 
     try: # Comment out when needed to diagnose errors
 #    while True: # Uncomment when needed to diagnose errors
@@ -299,6 +310,10 @@ if __name__ == "__main__":
 #            micropython.mem_info(1) # https://forum.micropython.org/viewtopic.php?t=4912
             
             for pin_num in airports:
+                if airports[pin_num] in LG_LIST: # skip if its a legend item
+                    print(pin_num,"is a Legend LED;",airports[pin_num])
+                    continue
+                
                 print(pin_num, airports[pin_num]) # debug
                 np[pin_num]  = dim_leds(get_brightness(), WHITE) # help transition as new data is received
                 np.write()

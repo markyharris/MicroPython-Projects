@@ -3,12 +3,12 @@
 # 2 examples provided below. The list named 'airports' will be used.
 
 
-airports_TEST = {
-    0:"KBPT",
-    1:"K3R7",
-    2:"KLNQ",
-    3:"KHDC",
-    4:"KLNP",
+airports = {
+    0:"LG_VFR",
+    1:"LG_MVFR",
+    2:"LG_IFR",
+    3:"LG_LIFR",
+    4:"LG_NOWX",
     5:"KJWH",
     6:"KPHX",
     7:"KFFZ",
@@ -21,7 +21,7 @@ airports_TEST = {
     }
 
 # Phoenix Terminal Area Chart airports
-airports = {
+airports_PHX = {
     0:"KDVT",
     1:"KSDL",
     2:"KLUF",
@@ -35,7 +35,12 @@ airports = {
     10:"KP08",
     11:"KCGZ",
     12:"KA39",
-    13:"KGXF"
+    13:"KGXF",
+    14:"LG_VFR",
+    15:"LG_MVFR",
+    16:"LG_IFR",
+    17:"LG_LIFR",
+    18:"LG_NOWX",
     }
 
 # San Francisco Terminal Area Chart airports
