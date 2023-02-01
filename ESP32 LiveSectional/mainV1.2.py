@@ -1,5 +1,5 @@
 # ESP32-LiveSectional Metar Map by Mark Harris
-# Version 1.3
+# Version 1.2
 #
 # Uses an ESP32 to drive addressable LED's,
 #  Example ESP32
@@ -21,11 +21,6 @@
 #    Lightning display if lightning is reported in the METAR
 #    Display high winds by blinking led's if winds above threshold
 #    Can use either RGB LED's (WS2812) or GRB LED's (WS2811)
-#    Display Weather String as color, such as Rain, Snow etc.
-#
-# Open file 'airports.py' and fill in required LED pin number and 4 character airport identifier
-#
-# Open file 'config.py' and alter user variables and colors to suit build
 
 
 # Imports
@@ -39,34 +34,82 @@ import gc        # https://docs.micropython.org/en/latest/library/gc.html
 import ntptime
 import micropython
 import sys
-from airports import *
-from config import *
+
+ 
+# Define airports dictionary. Pin Number of LEDs, Airport ID
+# 2 examples provided below. The list named 'airports' will be used.
+
+# Phoenix Terminal Area Chart airports
+airports = {
+    0:"KDVT",
+    1:"KSDL",
+    2:"KLUF",
+    3:"KGEU",
+    4:"KBXK",
+    5:"KGYR",
+    6:"KPHX",
+    7:"KFFZ",
+    8:"KCHD",
+    9:"KIWA",
+    10:"KP08",
+    11:"KCGZ",
+    12:"KA39",
+    13:"KGXF"
+    }
+
+# San Francisco Terminal Area Chart airports
+airports_SF = {
+    0:"KDVO",
+    1:"KCCR",
+    2:"KL83",
+    3:"KTCY",
+    4:"KLVK",
+    5:"KOAK",
+    6:"KSFO",
+    7:"KHAF",
+    8:"KSQL",
+    9:"KNVQ",
+    10:"KSJC",
+    11:"KRHV",
+    12:"KE16"
+    }
 
 
-# Various variables
+# User Variables
+hi_winds = 15                     # High winds threshold in kts to blink leds.
+show_lightning = 1                # 1 = Yes, 0 = No. Flash yellow if lightning in area
+show_hiwinds = 1                  # 1 = Yes, 0 = No. Blink led if winds are above 'hi_winds'
+rgb_grb = 1                       # 1 = Use RGB color codes, 0 = Use GRB color codes
+time_zone = -7                    # change to match location. Arizona = -7, Boston = -5
+update_interval = 5               # how often to update the METAR data; in Minutes
+dim_time = (21, 30, 0)            # Use 24 hour time. Set both times to the same to disable dimming
+bright_time = (6, 30, 0)          # format (hours, minutes, seconds) No leading zeros
+dim_brightness = 5                # in percentage of normal brightness, 0 to turn off led's
+normal_brightness = 100           # 100% = max brightness
+hi_wind_brightness = 10           # how bright the airport gets dimmed to when winds are above hi_winds
+pin = 27                          # pin number used to address LED string
+metar_age = 2.5                   # Longest acceptable age of metar returned by FAA in hours
 num_leds = len(airports)          # number of LED's in string to use (# of airports)
 wifi_led = machine.Pin(2, machine.Pin.OUT)
 url = f"https://www.aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=xml&mostRecentForEachStation=constraint&hoursBeforeNow="+str(metar_age)+"&stationString="
 
 
-# Setup Needed Lists
-COLOR_LIST = [VFR_COLOR, MVFR_COLOR, IFR_COLOR, LIFR_COLOR, NOWX_COLOR]
-FC_LIST = ["VFR", "MVFR", "IFR", "LIFR", "NOWX"]
-
-
-# Weather String codes
 # Thunderstorm and lightning METAR weather description codes that denote lightning in the area.
 wx_lghtn_ck = ["TS", "TSRA", "TSGR", "+TSRA", "TSRG", "FC", "SQ", "VCTS", "VCTSRA", "VCTSDZ", "LTG"]
-# Snow in various forms
-wx_snow_ck = ["BLSN", "DRSN", "-RASN", "RASN", "+RASN", "-SN", "SN", "+SN", "SG", "IC", "PE", "PL", "-SHRASN", "SHRASN", "+SHRASN", "-SHSN", "SHSN", "+SHSN"]
-# Rain in various forms
-wx_rain_ck = ["-DZ", "DZ", "+DZ", "-DZRA", "DZRA", "-RA", "RA", "+RA", "-SHRA", "SHRA", "+SHRA", "VIRGA", "VCSH"]
-# Freezing Rain
-wx_frrain_ck = ["-FZDZ", "FZDZ", "+FZDZ", "-FZRA", "FZRA", "+FZRA"]
-# Dust Sand and/or Ash
-wx_dustsandash_ck = ["DU", "SA", "HZ", "FU", "VA", "BLDU", "BLSA", "PO", "VCSS", "SS", "+SS",]
-# Fog
-wx_fog_ck = ["BR", "MIFG", "VCFG", "BCFG", "PRFG", "FG", "FZFG"]
+
+
+# Constants
+VFR_COLOR = (0, 255, 0)           # GREEN 
+MVFR_COLOR = (0,0,255)            # BLUE
+IFR_COLOR = (255, 0, 0)           # RED
+LIFR_COLOR = (255, 0, 255)        # MAGENTA
+NOWX_COLOR = (15,15,15)           # GREY
+LIGHTNING_COLOR = (255, 255, 0)   # YELLOW
+OFF_COLOR = (0, 0, 0)             # BLACK
+WHITE = (255, 255, 255)           # WHITE
+
+COLOR_LIST = [VFR_COLOR, MVFR_COLOR, IFR_COLOR, LIFR_COLOR, NOWX_COLOR]
+FC_LIST = ["VFR", "MVFR", "IFR", "LIFR", "NOWX"]
 
 
 # Set instance of neopixel
@@ -184,23 +227,22 @@ def show_lightning():
         return
     
     # Display Lightning if present in wxstring
-    for pin_num in flt_category: #wx_lightning:
-        if flt_category[pin_num][3] in wx_lghtn_ck:
-            np[pin_num] = dim_leds(get_brightness(), LIGHTNING_COLOR)
-            np.write()
-            time.sleep(.3)
-            
-            np[pin_num] = dim_leds(get_brightness(), flt_category[pin_num][1])
-            np.write()
-            time.sleep(.1)
-            
-            np[pin_num] = dim_leds(get_brightness(), LIGHTNING_COLOR)
-            np.write()
-            time.sleep(.7)
-            
-            np[pin_num] = dim_leds(get_brightness(), flt_category[pin_num][1])
-            np.write()
-            time.sleep(1)
+    for pin_num in wx_lightning:        
+        np[pin_num] = dim_leds(get_brightness(), LIGHTNING_COLOR)
+        np.write()
+        time.sleep(.3)
+        
+        np[pin_num] = dim_leds(get_brightness(), flt_category[pin_num][1])
+        np.write()
+        time.sleep(.1)
+        
+        np[pin_num] = dim_leds(get_brightness(), LIGHTNING_COLOR)
+        np.write()
+        time.sleep(.7)
+        
+        np[pin_num] = dim_leds(get_brightness(), flt_category[pin_num][1])
+        np.write()
+        time.sleep(2)
 
 
 def show_hiwinds():
@@ -224,45 +266,8 @@ def show_hiwinds():
             color = flt_category[pin_num][1]
             np[pin_num] = dim_leds(get_brightness(), color)
     np.write()
-    time.sleep(2)
-
-
-def show_wxstring():
-    if show_wxstring == 0:
-        return
-    
-    for pin_num in flt_category:
-        wx_split = flt_category[pin_num][3].split()
-        if len(wx_split) == 0:
-            wx_split = ["",""]
-            
-        # Check for Rain
-        if  wx_split[0] in wx_rain_ck:
-            np[pin_num] = dim_leds(get_brightness(), RAIN)            
-        # Check for Snow
-        elif  wx_split[0] in wx_snow_ck:
-            np[pin_num] = dim_leds(get_brightness(), SNOW)            
-        # Check for Freezing Rain
-        elif  wx_split[0] in wx_frrain_ck:
-            np[pin_num] = dim_leds(get_brightness(), FRRAIN)
-        # Check for Fog            
-        elif  wx_split[0] in wx_fog_ck:
-            np[pin_num] = dim_leds(get_brightness(), FOG)
-        # Check for Sand/Dust/Ash            
-        if  wx_split[0] in wx_dustsandash_ck:
-            np[pin_num] = dim_leds(get_brightness(), DUST)
-
-    np.write()
-    time.sleep(2)
-        
-    # Restore Flight Category Color
-    for pin_num in flt_category:        
-        color = flt_category[pin_num][1]
-        np[pin_num] = dim_leds(get_brightness(), color)
-    np.write()
     time.sleep(1)
 
-    
 
 def rgbgrb(color):
     if rgb_grb:
@@ -286,15 +291,14 @@ if __name__ == "__main__":
     print("ESP32-LiveSectional Metar Map\n"+"Ctrl-C to Exit"+"\n")
     clear()
     fade()
-    rainbowCycle(np,3)
 
     try: # Comment out when needed to diagnose errors
 #    while True: # Uncomment when needed to diagnose errors
         while True:            
             wx_lightning = {}
             flt_category = {}
-#            clear()
-#            rainbowCycle(np,3)
+            clear()
+            rainbowCycle(np,3)
             gc.collect()     # force collection to start
 #            micropython.mem_info(1) # https://forum.micropython.org/viewtopic.php?t=4912
             
@@ -310,7 +314,7 @@ if __name__ == "__main__":
                 # Check to see if a weather is being reported back from airport
                 if int(root[6].attrib['num_results']) == 0:
                     print("NO WX PROVIDED")
-                    flt_category[pin_num] = (airports[pin_num],NOWX_COLOR,"0","")
+                    flt_category[pin_num] = (airports[pin_num],"NOWX","0")
 
                 for j in range(int(root[6].attrib['num_results'])): # Get num or results to iterate
                     # Re-Initialize variables
@@ -328,29 +332,31 @@ if __name__ == "__main__":
                         if metar.tag == 'flight_category':
                             flight_category = metar.text
 
-                        elif metar.tag == 'wx_string':
+                        if metar.tag == 'wx_string':
                             wxstring = metar.text
                             
-                        elif metar.tag == 'wind_speed_kt':
+                        if metar.tag == 'wind_speed_kt':
                             wind_speed = metar.text
                             
-                        elif metar.tag == 'wind_dir_degrees':
+                        if metar.tag == 'wind_dir_degrees':
                             wind_dir = metar.text
                                 
                     if station_id != "" or flight_category != "":
                         print(station_id, "is", flight_category)
                         print("Wind Speed:",str(wind_speed),"Wind Dir:",str(wind_dir))
                         
+                        if wxstring != "":
+                            print("Weather String = "+str(wxstring))
+                            if wxstring in wx_lghtn_ck:
+                                wx_lightning[pin_num] = airports[pin_num]
+                                print("Lightning at:",wx_lightning[pin_num]) # debug
                     else:
                         print(station_id,"is not reporting")
                         flight_category = "NOWX"
                         
                     np[pin_num] = dim_leds(get_brightness(), get_fc_color(flight_category))
-                    flt_category[pin_num] = (airports[pin_num],get_fc_color(flight_category),wind_speed,wxstring)
+                    flt_category[pin_num] = (airports[pin_num],get_fc_color(flight_category),wind_speed)
             np.write()
-            print(flt_category) # debug
-            if debug == 1:
-                flt_category = debug_list # debug
             
             # Print current time after updating all LED's
             str_min = str(min)
@@ -365,8 +371,7 @@ if __name__ == "__main__":
             while time.time() < timeout_start + (update_interval * 60): # Cycle through this until update needed
                 show_lightning()
                 show_hiwinds()
-                show_wxstring()
-                time.sleep(2)
+                time.sleep(3)
 
 
     except KeyboardInterrupt:
@@ -374,15 +379,16 @@ if __name__ == "__main__":
         print("Keyboard Interrupt Received")
         print("\nExiting Program")
         
-#    except Exception as e: # Reset controller and see if issue is temporary
-#        clear()
-#        print("\nResetting ESP32 in 1 minute")
-#        print("Exception:\n",e)
-#        timeout_start = time.time() # Set current moment we enter this code
-#        while time.time() < timeout_start + (60): # Cycle through this until update needed
-#            fade()
-#            time.sleep(1)
-#        machine.reset()
+    except Exception as e: # Reset controller and see if issue is temporary
+        clear()
+        print("\nResetting ESP32 in 1 minute")
+        print("Exception:\n",e)
+        timeout_start = time.time() # Set current moment we enter this code
+        while time.time() < timeout_start + (60): # Cycle through this until update needed
+            fade()
+            time.sleep(1)
+#        time.sleep(60)
+        machine.reset()
 
 
         
