@@ -1,5 +1,5 @@
 # ESP32-LiveSectional Metar Map by Mark Harris
-# Version 1.3
+# Version 1.4
 #
 # Uses an ESP32 to drive addressable LED's,
 #  Example ESP32
@@ -22,7 +22,7 @@
 #    Display high winds by blinking led's if winds above threshold
 #    Can use either RGB LED's (WS2812) or GRB LED's (WS2811)
 #    Display Weather String as color, such as Rain, Snow etc.
-#    Display a Legend for the Flight Category Colors. Must use these to denote a legend LED
+#    Display a basic Legend for the Flight Category Colors. Must use these to denote a legend LED
 #      "LG_VFR", "LG_MVFR", "LG_IFR", "LG_LIFR", "LG_NOWX": i.e. 0:"LG_VFR" in airport.py file
 #
 # Open file 'airports.py' and fill in required LED pin number and 4 character airport identifier
@@ -278,10 +278,8 @@ def rgbgrb(color):
 def show_legend():
     for pin_num in airports:
         if airports[pin_num] in LG_LIST:
-#            print(airports[pin_num]) # debug
             index = LG_LIST.index(airports[pin_num])
             np[pin_num]  = dim_leds(get_brightness(),COLOR_LIST[index]) # help transition as new data is received
-#            print(COLOR_LIST[index]) # debug
     np.write()
 
 

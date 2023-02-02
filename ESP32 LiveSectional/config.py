@@ -8,18 +8,18 @@ show_hiwinds = 1                  # 1 = Yes, 0 = No. Blink led if winds are abov
 show_wxstring = 1                 # 1 = Yes, 0 = No. Display color to represent weather type
 rgb_grb = 1                       # 1 = Use RGB color codes, 0 = Use GRB color codes
 time_zone = -7                    # change to match location. Arizona = -7, Boston = -5
-update_interval = 5               # how often to update the METAR data; in Minutes
-dim_time = (21, 30, 0)            # Use 24 hour time. Set both times to the same to disable dimming
-bright_time = (6, 30, 0)          # format (hours, minutes, seconds) No leading zeros
-dim_brightness = 5                # in percentage of normal brightness, 0 to turn off led's
+update_interval = 5               # how often to update the METAR data, in Minutes
+dim_time = (21, 30, 0)            # Dimming time. Use 24 hour time. Set both times to the same to disable
+bright_time = (6, 30, 0)          # Normal Brightness on. Format (hours, minutes, seconds) No leading zeros
+dim_brightness = 5                # in percentage of normal brightness, 0 will turn off led's
 normal_brightness = 100           # 100% = max brightness
 hi_wind_brightness = 10           # how bright the airport gets dimmed to when winds are above hi_winds
 pin = 27                          # pin number used to address LED string
 metar_age = 2.5                   # Longest acceptable age of metar returned by FAA in hours
-debug = 0                         # 1 use debug list, 0 don't use it.
+debug = 0                         # 1 = use debug list, 0 = don't use it. Used for debugging only.
 
 
-# LED Color Constants
+# LED Color Constants in RGB Format
 VFR_COLOR = (0, 255, 0)           # GREEN 
 MVFR_COLOR = (0,0,255)            # BLUE
 IFR_COLOR = (255, 0, 0)           # RED
