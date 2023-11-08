@@ -1,6 +1,7 @@
 # ESP32-LiveSectional Metar Map by Mark Harris
-# Version 1.4
+# Version 1.5
 #
+# UPDATED TO WORK WITH NEW FAA API,  https://aviationweather.gov/data/api/#/Dataserver/dataserverMetars
 # Uses an ESP32 to drive addressable LED's,
 #  Example ESP32
 #    https://www.aliexpress.us/item/3256804928892251.html?spm=a2g0o.order_list.order_list_main.5.773d1802eZ3wP3&gatewayAdapt=glo2usa&_randl_shipto=US
@@ -14,7 +15,7 @@
 #    micropython-xml.etree.ElementTree
 #    micropython-xmltok2
 #    micropython-urequests
-#
+#C
 # This version includes;
 #    WifiManager - https://randomnerdtutorials.com/esp32-wi-fi-manager-asyncwebserver/
 #    Dimming (or off) between two times, for night operations if desired
@@ -44,11 +45,12 @@ import sys
 from airports import *
 from config import *
 
-
+ 
 # Various variables
 num_leds = len(airports)          # number of LED's in string to use (# of airports)
 wifi_led = machine.Pin(2, machine.Pin.OUT)
-url = f"https://www.aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=xml&mostRecentForEachStation=constraint&hoursBeforeNow="+str(metar_age)+"&stationString="
+#url = f"https://www.aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=xml&mostRecentForEachStation=constraint&hoursBeforeNow="+str(metar_age)+"&stationString="
+url = f"https://aviationweather.gov/api/data/dataserver?requestType=retrieve&dataSource=metars&format=xml&mostRecent=true&mostRecentForEachStation=constraint&hoursBeforeNow="+str(metar_age)+"&stationString="
 
 
 # Setup Needed Lists

@@ -55,8 +55,8 @@ num_leds = 50                     # number of LED's in string
 pin = 27                          # pin number used to address LED string
 metar_age = 2.5                   # Longest acceptable age of metar returned by FAA in hours
 wifi_led = machine.Pin(2, machine.Pin.OUT)
-url = f"https://www.aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=xml&mostRecentForEachStation=constraint&hoursBeforeNow="+str(metar_age)+"&stationString="
-debug = 1                         # 1 = cycle through each wx color to determine if colors look proper
+url = f"https://aviationweather.gov/api/data/dataserver?requestType=retrieve&dataSource=metars&format=xml&mostRecent=true&mostRecentForEachStation=constraint&hoursBeforeNow="+str(metar_age)+"&stationString="
+debug = 0                         # 1 = cycle through each wx color to determine if colors look proper
 
 
 # Thunderstorm and lightning METAR weather description codes that denote lightning in the area.
@@ -258,7 +258,13 @@ if __name__ == "__main__":
     UTC_OFFSET = time_zone * 60 * 60  # Change the first number to match your timezone
     ntptime.host = "us.pool.ntp.org"  #"1.europe.pool.ntp.org"
     #print("Local time before synchronization：%s" %str(time.localtime())) # debug
-    ntptime.settime()
+    try:
+        ntptime.settime()
+    except:
+        print("Internet Not Available Yet. Will Reboot in 60 sec")
+        time.sleep(60)
+        machine.reset()
+
     #print("Local time after synchronization：%s" %str(time.localtime())) # debug
 
     print("ESP32-Runway Light\n"+"Ctrl-C to Exit"+"\n")
@@ -278,7 +284,7 @@ if __name__ == "__main__":
             # Get Metar Data from FAA
             f = urequests.get(url+airport).text
             root = ET.fromstring(f)
-#            print(f) # debug, view raw XML data returned
+            print(f) # debug, view raw XML data returned
 
             for j in range(int(root[6].attrib['num_results'])): # Get num or results to iterate
                 for metar in root[6][j]:      # will grab an individual airport's data
@@ -334,3 +340,5 @@ if __name__ == "__main__":
             time.sleep(1)
 #        time.sleep(60)
         machine.reset()
+
+
