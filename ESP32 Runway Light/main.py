@@ -1,6 +1,7 @@
 # ESP32-Runway Light by Mark Harris
-# Version 1.2 
+# Version 1.3 
 #
+# UPDATED TO WORK WITH NEW FAA API,  https://aviationweather.gov/data/api/#/Dataserver/dataserverMetars
 # Uses an ESP32 to drive addressable LED's,
 #  Example ESP32
 #    https://www.aliexpress.us/item/3256804928892251.html?spm=a2g0o.order_list.order_list_main.5.773d1802eZ3wP3&gatewayAdapt=glo2usa&_randl_shipto=US
